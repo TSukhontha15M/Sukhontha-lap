@@ -1,0 +1,592 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ผู้ช่วยขายสินค้าสำหรับเด็ก</title>
+  <meta name="description" content="เว็บแอปผู้ช่วยขายสินค้าสำหรับเด็ก พร้อมค้นหา กรอง แนะนำ และตะกร้าสินค้า" />
+  <style>
+    :root{
+      --bg:#f8fafc;
+      --card:#ffffff;
+      --ink:#0f172a;
+      --muted:#64748b;
+      --brand:#4f46e5;
+      --brand-2:#22c55e;
+      --accent:#fde68a;
+      --danger:#ef4444;
+      --ring: rgba(79,70,229,.35);
+      --radius:14px;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0; font-family:system-ui,-apple-system,Segoe UI,Roboto,Inter,Arial; color:var(--ink);
+      background:linear-gradient(180deg,#f1f5f9 0%, var(--bg) 100%);
+    }
+    header{
+      position:sticky; top:0; z-index:30;
+      background:rgba(255,255,255,.8); backdrop-filter:saturate(180%) blur(10px);
+      border-bottom:1px solid #e2e8f0;
+    }
+    .container{max-width:1200px; margin:0 auto; padding:16px}
+    .brand{display:flex; gap:12px; align-items:center}
+    .logo{
+      width:40px; height:40px; border-radius:10px; display:grid; place-items:center;
+      background:conic-gradient(from 160deg at 50% 50%, #a78bfa, #60a5fa, #34d399, #fbbf24, #f472b6, #a78bfa);
+      color:#fff; font-weight:800;
+      box-shadow:0 6px 20px rgba(79,70,229,.25);
+    }
+    .brand h1{font-size:18px; margin:0; line-height:1.1}
+    .brand small{color:var(--muted)}
+    .actions{display:flex; gap:8px; align-items:center; margin-left:auto}
+    button, select, input{
+      font:inherit; border-radius:10px; border:1px solid #e5e7eb; background:#fff; color:var(--ink);
+    }
+    button{padding:10px 14px; cursor:pointer}
+    button:focus-visible, input:focus-visible, select:focus-visible{
+      outline:none; box-shadow:0 0 0 4px var(--ring); border-color:var(--brand)
+    }
+    .btn-primary{background:var(--brand); color:#fff; border-color:transparent}
+    .btn-ghost{background:transparent}
+    .badge{display:inline-block; padding:4px 8px; border-radius:999px; font-size:12px; background:#eef2ff; color:#3730a3}
+    main{display:grid; grid-template-columns:280px 1fr 320px; gap:16px; align-items:start}
+    @media (max-width:1024px){ main{grid-template-columns:1fr} .side, .assistant{order:2} .catalog{order:1} }
+    .panel{background:var(--card); border:1px solid #e5e7eb; border-radius:var(--radius); padding:14px}
+    .side h3, .assistant h3{margin:0 0 10px 0}
+    .filters{display:grid; gap:10px}
+    .field{display:grid; gap:6px}
+    .range{display:flex; gap:8px}
+    .chips{display:flex; flex-wrap:wrap; gap:8px}
+    .chip{padding:6px 10px; border-radius:999px; border:1px solid #e5e7eb; cursor:pointer; user-select:none}
+    .chip[data-active="true"]{background:#eef2ff; border-color:#c7d2fe; color:#3730a3}
+    .catalog .toolbar{display:flex; flex-wrap:wrap; gap:10px; align-items:center; margin-bottom:10px}
+    .grow{flex:1}
+    .grid{display:grid; grid-template-columns:repeat(3,1fr); gap:14px}
+    @media (max-width:1200px){ .grid{grid-template-columns:repeat(2,1fr)} }
+    @media (max-width:640px){ .grid{grid-template-columns:1fr} }
+    .card{
+      background:var(--card); border:1px solid #e5e7eb; border-radius:16px; overflow:hidden;
+      display:flex; flex-direction:column; transition:transform .08s ease;
+    }
+    .card:hover{transform:translateY(-2px)}
+    .thumb{height:150px; display:grid; place-items:center; font-size:42px}
+    .thumb[data-bg="toys"]{background:#fef3c7}
+    .thumb[data-bg="books"]{background:#dbeafe}
+    .thumb[data-bg="clothes"]{background:#dcfce7}
+    .thumb[data-bg="gear"]{background:#fae8ff}
+    .card .body{padding:12px; display:grid; gap:8px}
+    .title{font-weight:700}
+    .muted{color:var(--muted)}
+    .price{font-weight:800}
+    .row{display:flex; justify-content:space-between; align-items:center; gap:8px}
+    .rating{font-size:14px; color:#f59e0b}
+    .empty{padding:24px; text-align:center; color:var(--muted)}
+    .assistant .steps{display:grid; gap:10px}
+    .assistant .bubble{
+      background:#f1f5f9; padding:10px 12px; border-radius:12px; border:1px solid #e5e7eb;
+    }
+    .assistant .cta{display:flex; gap:8px; flex-wrap:wrap}
+    .cart-header{display:flex; justify-content:space-between; align-items:center}
+    .cart-list{display:grid; gap:10px; margin-top:10px; max-height:45vh; overflow:auto; padding-right:4px}
+    .cart-item{display:grid; grid-template-columns:48px 1fr auto; gap:10px; align-items:center}
+    .cart-item .ph{width:48px; height:48px; border-radius:10px; display:grid; place-items:center; background:#eef2ff}
+    .qty{display:flex; align-items:center; gap:6px}
+    .qty button{width:28px; height:28px; padding:0}
+    .total{display:grid; gap:6px; border-top:1px dashed #e5e7eb; padding-top:10px}
+    .link{background:none; border:none; color:var(--brand); padding:0; cursor:pointer}
+    .danger{color:var(--danger)}
+    .sr-only{position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0}
+    footer{color:var(--muted); text-align:center; padding:24px 0}
+    .pill{background:#ecfeff; color:#155e75; padding:4px 8px; border-radius:999px; font-size:12px}
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container" style="display:flex; gap:16px; align-items:center;">
+      <div class="brand" aria-label="โลโก้และชื่อแบรนด์">
+        <div class="logo" aria-hidden="true">K</div>
+        <div>
+          <h1>Kids Helper <span class="pill">Demo</span></h1>
+          <small class="muted">ผู้ช่วยขายสินค้าสำหรับเด็ก</small>
+        </div>
+      </div>
+      <div class="actions">
+        <button class="btn-ghost" id="btn-clear-storage" title="ล้างข้อมูลแคช">รีเซ็ต</button>
+        <button class="btn-primary" id="btn-open-cart" aria-haspopup="dialog" aria-controls="cart-panel">ตะกร้า (<span id="cart-count">0</span>)</button>
+      </div>
+    </div>
+  </header>
+
+  <div class="container">
+    <main>
+      <!-- Sidebar Filters -->
+      <aside class="panel side" aria-label="ตัวกรอง">
+        <h3>ค้นหา & กรอง</h3>
+        <div class="filters" id="filters">
+          <div class="field">
+            <label for="q">ค้นหาชื่อ/แท็ก</label>
+            <input id="q" type="search" placeholder="เช่น เลโก้, หนังสือภาพ" />
+          </div>
+
+          <div class="field">
+            <label for="category">หมวดหมู่</label>
+            <select id="category">
+              <option value="">ทั้งหมด</option>
+              <option value="toys">ของเล่น</option>
+              <option value="books">หนังสือ</option>
+              <option value="clothes">เสื้อผ้า</option>
+              <option value="gear">อุปกรณ์/ของใช้</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label>อายุเด็ก (ปี)</label>
+            <div class="range">
+              <input id="age" type="number" min="0" max="12" step="1" placeholder="เช่น 4" />
+              <button id="btn-age-clear" class="btn-ghost" title="ล้างอายุ">ล้าง</button>
+            </div>
+            <small class="muted">* ใส่อายุจะช่วยกรองสินค้าที่เหมาะสม</small>
+          </div>
+
+          <div class="field">
+            <label>ช่วงราคา (บาท)</label>
+            <div class="range">
+              <input id="min" type="number" min="0" step="50" placeholder="ต่ำสุด">
+              <input id="max" type="number" min="0" step="50" placeholder="สูงสุด">
+            </div>
+          </div>
+
+          <div class="field">
+            <label>ความสนใจ</label>
+            <div class="chips" id="chip-interests" role="listbox" aria-label="เลือกความสนใจ">
+              <span class="chip" data-tag="ตัวต่อ">ตัวต่อ</span>
+              <span class="chip" data-tag="ศิลปะ">ศิลปะ</span>
+              <span class="chip" data-tag="ดนตรี">ดนตรี</span>
+              <span class="chip" data-tag="กีฬา">กีฬา</span>
+              <span class="chip" data-tag="อ่านหนังสือ">อ่านหนังสือ</span>
+              <span class="chip" data-tag="วิทยาศาสตร์">วิทยาศาสตร์</span>
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="sort">จัดเรียง</label>
+            <select id="sort">
+              <option value="featured">แนะนำ</option>
+              <option value="price-asc">ราคาต่ำ→สูง</option>
+              <option value="price-desc">ราคาสูง→ต่ำ</option>
+              <option value="rating-desc">เรตติ้งสูง→ต่ำ</option>
+            </select>
+          </div>
+
+          <button class="btn-primary" id="btn-apply">ใช้ตัวกรอง</button>
+          <button class="btn-ghost" id="btn-reset">ล้างตัวกรอง</button>
+        </div>
+      </aside>
+
+      <!-- Catalog -->
+      <section class="catalog">
+        <div class="panel">
+          <div class="toolbar">
+            <div class="grow">
+              <strong>สินค้า</strong> • <span id="result-count">0</span> รายการ
+            </div>
+            <div class="muted">เคล็ดลับ: ใส่อายุ + ความสนใจ เพื่อให้ผู้ช่วยแนะนำได้ตรงขึ้น</div>
+          </div>
+          <div class="grid" id="grid"></div>
+          <div id="empty" class="empty" hidden>ไม่พบสินค้าที่ตรงเงื่อนไข ลองล้างตัวกรองหรือลดเงื่อนไขลง</div>
+        </div>
+      </section>
+
+      <!-- Assistant -->
+      <aside class="panel assistant" id="assistant" aria-live="polite">
+        <h3>ผู้ช่วยแนะนำ</h3>
+        <div class="steps">
+          <div class="bubble">
+            <div class="field">
+              <label for="as-age">อายุเด็ก (ปี)</label>
+              <input id="as-age" type="number" min="0" max="12" step="1" placeholder="เช่น 5">
+            </div>
+            <div class="field">
+              <label for="as-budget">งบประมาณโดยประมาณ (บาท)</label>
+              <input id="as-budget" type="number" min="0" step="50" placeholder="เช่น 500">
+            </div>
+            <div class="field">
+              <label>ความสนใจ</label>
+              <div class="chips" id="as-interests">
+                <span class="chip" data-tag="ตัวต่อ">ตัวต่อ</span>
+                <span class="chip" data-tag="ศิลปะ">ศิลปะ</span>
+                <span class="chip" data-tag="ดนตรี">ดนตรี</span>
+                <span class="chip" data-tag="กีฬา">กีฬา</span>
+                <span class="chip" data-tag="อ่านหนังสือ">อ่านหนังสือ</span>
+                <span class="chip" data-tag="วิทยาศาสตร์">วิทยาศาสตร์</span>
+              </div>
+            </div>
+            <div class="cta">
+              <button class="btn-primary" id="as-suggest">แนะนำสินค้า</button>
+              <button class="btn-ghost" id="as-clear">ล้างข้อมูล</button>
+            </div>
+          </div>
+
+          <div id="as-output" class="bubble" hidden></div>
+        </div>
+      </aside>
+    </main>
+  </div>
+
+  <!-- Cart Panel -->
+  <dialog id="cart-panel" style="border:none; padding:0; width:min(720px, 96vw); border-radius:16px;">
+    <div class="panel" style="border:none; border-radius:16px;">
+      <div class="cart-header">
+        <h3>ตะกร้าสินค้า</h3>
+        <div>
+          <button class="btn-ghost" id="btn-close-cart" aria-label="ปิดตะกร้า">ปิด</button>
+        </div>
+      </div>
+      <div id="cart-list" class="cart-list"></div>
+      <div class="total">
+        <div class="row"><span>ยอดรวม</span><strong id="cart-subtotal">-</strong></div>
+        <div class="row"><span>ภาษีประมาณการ (7%)</span><span id="cart-tax">-</span></div>
+        <div class="row"><span>รวมทั้งสิ้น</span><strong id="cart-grand">-</strong></div>
+        <div class="row" style="gap:10px">
+          <button class="btn-primary" id="btn-checkout">ชำระเงิน (ตัวอย่าง)</button>
+          <button class="btn-ghost danger" id="btn-clear-cart">ล้างตะกร้า</button>
+        </div>
+        <small class="muted">* เดโม: ไม่มีการชำระเงินจริง</small>
+      </div>
+    </div>
+  </dialog>
+
+  <footer>
+    © <span id="year"></span> Kids Helper • เดโมเพื่อการศึกษา/ทดสอบ UX เท่านั้น
+  </footer>
+
+  <template id="tpl-card">
+    <article class="card" data-id="">
+      <div class="thumb" data-bg=""><span class="emoji" aria-hidden="true">🧸</span></div>
+      <div class="body">
+        <div class="row"><div class="title"></div><span class="badge"></span></div>
+        <div class="muted small"></div>
+        <div class="row">
+          <div class="rating" aria-label="เรตติ้ง">★★★★★</div>
+          <div class="price">฿0.00</div>
+        </div>
+        <button class="btn-primary add">เพิ่มลงตะกร้า</button>
+      </div>
+    </article>
+  </template>
+
+  <template id="tpl-cart-item">
+    <div class="cart-item" data-id="">
+      <div class="ph" aria-hidden="true">🎁</div>
+      <div>
+        <div class="row">
+          <strong class="ci-title"></strong>
+          <button class="link danger ci-remove">ลบ</button>
+        </div>
+        <div class="muted ci-meta"></div>
+        <div class="qty">
+          <button class="btn-ghost ci-dec" aria-label="ลดจำนวน">−</button>
+          <span class="ci-qty" aria-live="polite">1</span>
+          <button class="btn-ghost ci-inc" aria-label="เพิ่มจำนวน">＋</button>
+          <span class="price ci-price"></span>
+        </div>
+      </div>
+      <div class="badge ci-cat"></div>
+    </div>
+  </template>
+
+  <script>
+    // ---------- Utilities ----------
+    const $ = (sel, el=document) => el.querySelector(sel);
+    const $$ = (sel, el=document) => Array.from(el.querySelectorAll(sel));
+    const fmtTHB = (n)=> new Intl.NumberFormat('th-TH',{style:'currency',currency:'THB',maximumFractionDigits:0}).format(n);
+
+    // ---------- Demo Data ----------
+    const PRODUCTS = [
+      {id:'T001', name:'ตัวต่อบล็อกสร้างเมือง 120 ชิ้น', cat:'toys', age:[4,10], price:590, rating:4.7, emoji:'🧱', tags:['ตัวต่อ','วิทยาศาสตร์']},
+      {id:'T002', name:'ชุดศิลป์ระบายสีปลอดภัย (ไร้กลิ่น)', cat:'toys', age:[3,9], price:320, rating:4.5, emoji:'🎨', tags:['ศิลปะ']},
+      {id:'B001', name:'หนังสือภาพเรียนรู้ A-Z', cat:'books', age:[2,6], price:220, rating:4.6, emoji:'📚', tags:['อ่านหนังสือ']},
+      {id:'B002', name:'นิทานก่อนนอน 30 เรื่อง', cat:'books', age:[3,8], price:290, rating:4.8, emoji:'📖', tags:['อ่านหนังสือ']},
+      {id:'C001', name:'เสื้อยืดผ้าฝ้ายออร์แกนิก (3 ตัว)', cat:'clothes', age:[1,6], price:450, rating:4.4, emoji:'👕', tags:['สบายผิว']},
+      {id:'C002', name:'ชุดวอร์มเด็กสำหรับเล่นกีฬา', cat:'clothes', age:[5,10], price:650, rating:4.3, emoji:'🏃', tags:['กีฬา']},
+      {id:'G001', name:'หูฟังป้องกันเสียงดังสำหรับเด็ก', cat:'gear', age:[3,12], price:540, rating:4.5, emoji:'🎧', tags:['ความปลอดภัย']},
+      {id:'G002', name:'ขวดน้ำสแตนเลส 400ml (ไม่ร้อนมือ)', cat:'gear', age:[3,12], price:280, rating:4.6, emoji:'🧃', tags:['ไปโรงเรียน']},
+      {id:'T003', name:'กลองของเล่นจิ๋ว เสริมจังหวะ', cat:'toys', age:[4,9], price:480, rating:4.2, emoji:'🥁', tags:['ดนตรี']},
+      {id:'T004', name:'ชุดทดลองวิทย์ง่ายๆ 10 กิจกรรม', cat:'toys', age:[6,12], price:790, rating:4.9, emoji:'🧪', tags:['วิทยาศาสตร์']},
+      {id:'B003', name:'การ์ดคำศัพท์ภาพ 200 คำ', cat:'books', age:[3,8], price:250, rating:4.5, emoji:'🃏', tags:['อ่านหนังสือ']},
+      {id:'G003', name:'กระเป๋าเป้เด็กน้ำหนักเบา', cat:'gear', age:[4,10], price:520, rating:4.4, emoji:'🎒', tags:['ไปโรงเรียน']},
+    ];
+
+    // ---------- State ----------
+    const state = {
+      q:'', cat:'', age:null, min:null, max:null, interests:new Set(), sort:'featured',
+      cart: new Map(JSON.parse(localStorage.getItem('cart')||'[]')), // Map<id, qty>
+      as:{age:null, budget:null, interests:new Set(JSON.parse(localStorage.getItem('as_interests')||'[]'))}
+    };
+
+    // ---------- Elements ----------
+    const grid = $('#grid'), empty = $('#empty'), resultCount = $('#result-count');
+    const inputs = {
+      q:$('#q'), category:$('#category'), age:$('#age'),
+      min:$('#min'), max:$('#max'), sort:$('#sort')
+    };
+    const chipsInterests = $('#chip-interests');
+    const btnApply = $('#btn-apply'), btnReset = $('#btn-reset'), btnAgeClear = $('#btn-age-clear');
+    const cartPanel = $('#cart-panel'), cartList = $('#cart-list');
+    const cartCount = $('#cart-count'), subtotalEl=$('#cart-subtotal'), taxEl=$('#cart-tax'), grandEl=$('#cart-grand');
+
+    // Assistant
+    const asAge = $('#as-age'), asBudget = $('#as-budget'), asInterests = $('#as-interests');
+    const asSuggest = $('#as-suggest'), asClear = $('#as-clear'), asOutput = $('#as-output');
+
+    // ---------- Init ----------
+    document.addEventListener('DOMContentLoaded', ()=>{
+      $('#year').textContent = new Date().getFullYear();
+      hydrateChips(chipsInterests, state.interests);
+      hydrateChips(asInterests, state.as.interests);
+      render();
+      updateCartUI();
+    });
+
+    // ---------- Event wiring ----------
+    btnApply.addEventListener('click', ()=>{
+      state.q = inputs.q.value.trim().toLowerCase();
+      state.cat = inputs.category.value;
+      state.age = inputs.age.value ? Number(inputs.age.value) : null;
+      state.min = inputs.min.value ? Number(inputs.min.value) : null;
+      state.max = inputs.max.value ? Number(inputs.max.value) : null;
+      state.sort = inputs.sort.value;
+      render();
+    });
+
+    btnReset.addEventListener('click', ()=>{
+      for(const k of Object.keys(inputs)){ inputs[k].value = ''; }
+      state.q=''; state.cat=''; state.age=null; state.min=null; state.max=null; state.sort='featured';
+      state.interests.clear(); $$('[data-active="true"]', chipsInterests).forEach(el=>el.dataset.active=false);
+      render();
+    });
+
+    btnAgeClear.addEventListener('click', ()=>{ inputs.age.value=''; state.age=null; render(); });
+
+    chipsInterests.addEventListener('click', (e)=>{
+      const chip = e.target.closest('.chip'); if(!chip) return;
+      const tag = chip.dataset.tag;
+      const isActive = chip.dataset.active === 'true';
+      chip.dataset.active = !isActive;
+      if(isActive){ state.interests.delete(tag); } else { state.interests.add(tag); }
+      render();
+    });
+
+    $('#btn-open-cart').addEventListener('click', ()=> cartPanel.showModal());
+    $('#btn-close-cart').addEventListener('click', ()=> cartPanel.close());
+    $('#btn-clear-cart').addEventListener('click', ()=>{ state.cart.clear(); persistCart(); updateCartUI(); });
+    $('#btn-checkout').addEventListener('click', ()=>{
+      if(state.cart.size===0){ alert('ตะกร้าว่าง'); return; }
+      alert('เดโม: ไปหน้าชำระเงิน (ยังไม่เชื่อมต่อ)');
+    });
+    $('#btn-clear-storage').addEventListener('click', ()=>{
+      if(confirm('ล้างแคชตะกร้าและการตั้งค่าผู้ช่วย?')){ localStorage.clear(); state.cart.clear(); updateCartUI(); }
+    });
+
+    // Assistant events
+    asSuggest.addEventListener('click', ()=>{
+      state.as.age = asAge.value ? Number(asAge.value) : null;
+      state.as.budget = asBudget.value ? Number(asBudget.value) : null;
+
+      // collect chips
+      state.as.interests = new Set($$('.chip[data-active="true"]', asInterests).map(c=>c.dataset.tag));
+      localStorage.setItem('as_interests', JSON.stringify(Array.from(state.as.interests)));
+
+      const recs = recommend(state.as);
+      renderAssistant(recs);
+    });
+
+    asClear.addEventListener('click', ()=>{
+      asAge.value=''; asBudget.value=''; $$('.chip', asInterests).forEach(c=>c.dataset.active=false);
+      state.as = {age:null, budget:null, interests:new Set()};
+      localStorage.removeItem('as_interests');
+      asOutput.hidden = true; asOutput.innerHTML = '';
+    });
+
+    asInterests.addEventListener('click', (e)=>{
+      const chip = e.target.closest('.chip'); if(!chip) return;
+      chip.dataset.active = chip.dataset.active === 'true' ? 'false' : 'true';
+    });
+
+    // ---------- Rendering ----------
+    function render(){
+      const items = applyFilters(PRODUCTS, {
+        q:state.q, cat:state.cat, age:state.age,
+        min:state.min, max:state.max, interests:[...state.interests],
+        sort:state.sort
+      });
+      grid.innerHTML='';
+      if(items.length===0){ empty.hidden=false; resultCount.textContent='0'; return; }
+      empty.hidden=true; resultCount.textContent=String(items.length);
+
+      for(const p of items){
+        const card = $('#tpl-card').content.firstElementChild.cloneNode(true);
+        card.dataset.id = p.id;
+        $('.emoji', card).textContent = p.emoji;
+        $('.thumb', card).dataset.bg = p.cat;
+        $('.title', card).textContent = p.name;
+        $('.badge', card).textContent = labelCat(p.cat);
+        $('.small', card).textContent = `เหมาะกับอายุ ${p.age[0]}–${p.age[1]} ปี • ${p.tags.join(', ')}`;
+        $('.rating', card).textContent = '★'.repeat(Math.round(p.rating)) + '☆'.repeat(5-Math.round(p.rating));
+        $('.price', card).textContent = fmtTHB(p.price);
+        $('.add', card).addEventListener('click', ()=> addToCart(p.id));
+        grid.appendChild(card);
+      }
+    }
+
+    function applyFilters(data, f){
+      let out = data.slice();
+      if(f.q){
+        out = out.filter(p =>
+          p.name.toLowerCase().includes(f.q) ||
+          p.tags.some(t => t.toLowerCase().includes(f.q))
+        );
+      }
+      if(f.cat){ out = out.filter(p => p.cat===f.cat); }
+      if(f.age!=null){ out = out.filter(p => f.age>=p.age[0] && f.age<=p.age[1]); }
+      if(f.min!=null){ out = out.filter(p => p.price>=f.min); }
+      if(f.max!=null){ out = out.filter(p => p.price<=f.max); }
+      if(f.interests && f.interests.length){
+        out = out.filter(p => f.interests.some(t => p.tags.includes(t)));
+      }
+      switch(f.sort){
+        case 'price-asc': out.sort((a,b)=>a.price-b.price); break;
+        case 'price-desc': out.sort((a,b)=>b.price-a.price); break;
+        case 'rating-desc': out.sort((a,b)=>b.rating-a.rating); break;
+        default: out.sort((a,b)=> b.rating - a.rating + (a.price-b.price)*0.0001 ); // featured heuristic
+      }
+      return out;
+    }
+
+    // ---------- Cart ----------
+    function addToCart(id){
+      const qty = state.cart.get(id) || 0;
+      state.cart.set(id, qty+1);
+      persistCart(); updateCartUI();
+      // simple feedback
+      $('#btn-open-cart').animate([{transform:'scale(1)'},{transform:'scale(1.06)'},{transform:'scale(1)'}],{duration:300});
+    }
+
+    function updateCartUI(){
+      cartList.innerHTML='';
+      let subtotal=0;
+
+      if(state.cart.size===0){
+        cartList.innerHTML = `<div class="empty">ตะกร้าของคุณยังว่างอยู่</div>`;
+      }else{
+        for(const [id, qty] of state.cart.entries()){
+          const p = PRODUCTS.find(x=>x.id===id);
+          if(!p) continue;
+          const row = $('#tpl-cart-item').content.firstElementChild.cloneNode(true);
+          row.dataset.id = id;
+          $('.ci-title', row).textContent = p.name;
+          $('.ci-meta', row).textContent = `อายุ ${p.age[0]}–${p.age[1]} ปี`;
+          $('.ci-price', row).textContent = fmtTHB(p.price * qty);
+          $('.ci-qty', row).textContent = qty;
+          $('.ci-cat', row).textContent = labelCat(p.cat);
+          $('.ph', row).textContent = p.emoji;
+
+          $('.ci-remove', row).addEventListener('click', ()=>{ state.cart.delete(id); persistCart(); updateCartUI(); });
+          $('.ci-inc', row).addEventListener('click', ()=>{ state.cart.set(id, qty+1); persistCart(); updateCartUI(); });
+          $('.ci-dec', row).addEventListener('click', ()=>{
+            if(qty<=1){ state.cart.delete(id); } else { state.cart.set(id, qty-1); }
+            persistCart(); updateCartUI();
+          });
+
+          cartList.appendChild(row);
+          subtotal += p.price * qty;
+        }
+      }
+
+      const tax = Math.round(subtotal * 0.07);
+      const grand = subtotal + tax;
+
+      subtotalEl.textContent = fmtTHB(subtotal);
+      taxEl.textContent = fmtTHB(tax);
+      grandEl.textContent = fmtTHB(grand);
+      cartCount.textContent = String([...state.cart.values()].reduce((a,b)=>a+b,0));
+    }
+
+    function persistCart(){
+      localStorage.setItem('cart', JSON.stringify(Array.from(state.cart.entries())));
+    }
+
+    // ---------- Assistant (rule-of-thumb recommender) ----------
+    function recommend({age, budget, interests}){
+      let items = PRODUCTS.slice();
+
+      if(age!=null) items = items.filter(p => age>=p.age[0] && age<=p.age[1]);
+      if(budget!=null) items = items.filter(p => p.price <= budget);
+      if(interests && interests.size){
+        items = items.filter(p => [...interests].some(t => p.tags.includes(t)));
+      }
+
+      // score
+      const scored = items.map(p=>{
+        let score = p.rating * 10;
+        if(budget!=null){ score += Math.max(0, (budget - p.price)/50); }
+        if(age!=null){ // closer to mid-age gets a slight bump
+          const mid = (p.age[0]+p.age[1])/2;
+          score += Math.max(0, 5 - Math.abs(mid - age));
+        }
+        if(interests && interests.size){
+          score += p.tags.filter(t => interests.has(t)).length * 5;
+        }
+        return {p, score};
+      }).sort((a,b)=>b.score-a.score);
+
+      return scored.slice(0,4).map(x=>x.p);
+    }
+
+    function renderAssistant(recs){
+      if(!recs.length){
+        asOutput.hidden=false;
+        asOutput.innerHTML = `<div class="muted">ยังไม่มีคำแนะนำที่ตรง ลองเพิ่มงบ/เปลี่ยนความสนใจ หรือไม่กำหนดงบประมาณ</div>`;
+        return;
+      }
+      asOutput.hidden=false;
+      asOutput.innerHTML = `
+        <div style="display:grid; gap:10px;">
+          <div><strong>คำแนะนำสำหรับคุณ</strong></div>
+          ${recs.map(p=>`
+            <div class="row" style="align-items:center; border:1px solid #e5e7eb; border-radius:12px; padding:10px;">
+              <div class="thumb" data-bg="${p.cat}" style="width:64px; height:64px; font-size:30px;">${p.emoji}</div>
+              <div style="flex:1; padding:0 8px;">
+                <div><strong>${p.name}</strong> <span class="badge">${labelCat(p.cat)}</span></div>
+                <div class="muted">อายุ ${p.age[0]}–${p.age[1]} ปี • ${p.tags.join(', ')}</div>
+              </div>
+              <div class="price">${fmtTHB(p.price)}</div>
+              <div><button class="btn-primary" data-add="${p.id}">เพิ่ม</button></div>
+            </div>
+          `).join('')}
+          <small class="muted">* ผู้ช่วยนี้เป็นระบบกฎง่ายๆ เพื่อเดโม (ไม่ใช่โมเดลเรียนรู้จริง)</small>
+        </div>
+      `;
+      // bind add buttons
+      $$('button[data-add]', asOutput).forEach(btn=>{
+        btn.addEventListener('click', ()=> addToCart(btn.dataset.add));
+      });
+    }
+
+    // ---------- Helpers ----------
+    function labelCat(cat){
+      return ({
+        toys:'ของเล่น', books:'หนังสือ', clothes:'เสื้อผ้า', gear:'อุปกรณ์/ของใช้'
+      })[cat] || cat;
+    }
+
+    function hydrateChips(container, set){
+      $$('.chip', container).forEach(chip=>{
+        const active = set.has(chip.dataset.tag);
+        chip.dataset.active = active ? 'true' : 'false';
+      });
+    }
+  </script>
+</body>
+</html>
